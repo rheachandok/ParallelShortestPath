@@ -50,3 +50,24 @@ vector<vector<pair<int, int>>> loadGraph(const string &filename, int &nodes) {
     inFile.close();
     return adjList;
 }
+
+vector<vector<int>> convertToMatrix(const vector<vector<pair<int, int>>> &graph, int numNodes) {
+    // Initialize adjacency matrix with INF (no direct edge)
+    vector<vector<int>> matrix(numNodes, vector<int>(numNodes, numeric_limits<int>::max()));
+
+    // Set diagonal to 0 (distance from node to itself)
+    for (int i = 0; i < numNodes; i++) {
+        matrix[i][i] = 0;
+    }
+
+    // Fill in the adjacency matrix from the adjacency list
+    for (int u = 0; u < numNodes; u++) {
+        for (const auto &edge : graph[u]) {
+            int v = edge.first;
+            int weight = edge.second;
+            matrix[u][v] = weight;
+        }
+    }
+
+    return matrix;
+}

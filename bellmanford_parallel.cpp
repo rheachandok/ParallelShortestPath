@@ -7,10 +7,13 @@
 
 using namespace std;
 
-// Parallel Bellman-Ford function
-void parallelBellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source) {
+// Parallel Bellman-Ford function with configurable number of threads
+void parallelBellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source, int num_threads) {
     vector<int> dist(nodes, numeric_limits<int>::max()); // Distance array, initialized to INF
     dist[source] = 0; // Distance to source is 0
+
+    // Set the number of threads
+    omp_set_num_threads(num_threads);
 
     // Relax all edges |V|-1 times
     for (int i = 0; i < nodes - 1; i++) {

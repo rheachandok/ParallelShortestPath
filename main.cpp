@@ -7,23 +7,35 @@
 #include "algorithm_fns.h"
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        cerr << "Usage: " << argv[0] << " B [s/p]" << endl;
+    if (argc != 4) {
+        cerr << "Usage: " << argv[0] << " B/F <num_nodes> <num_threads>" << endl;
         return 1;
     }
 
-    string mode = argv[2];
-    int nodes;
-    vector<vector<pair<int, int>>> graph = loadGraph("graph.txt", nodes);
+    string algorithm = argv[1];
+    int numNodes = atoi(argv[2]);
+    int numThreads = atoi(argv[3]);
 
-    int source = 0; // Example source node
+    // Generate and load graph
+    generateGraph(numNodes, "graph.txt");
+    vector<vector<pair<int, int>>> graph = loadGraph("graph.txt", numNodes);
+    printGraph(graph);
 
-    if (mode == "s") {
-        bellmanFord(nodes, graph, source);
-    } else if (mode == "p") {
-        parallelBellmanFord(nodes, graph, source);
-    } else {
-        cerr << "Invalid mode! Use 's' for sequential or 'p' for parallel." << endl;
+    int source = 0; 
+
+    if (algorithm == "B") {
+        cout << "Running Bellman-Ford Algorithm...\n";
+        bellmanFord(numNodes, graph, source);
+        parallelBellmanFord(numNodes, graph, source, numThreads);
+    } 
+    else if (algorithm == "F") {
+        cout << "Running Floyd-Warshall Algorithm...\n";
+        vector<vector<int>> adjMatrix = convertToMatrix(graph, numNodes); // Convert graph to matrix format
+        floydWarshall(adjMatrix);
+        parallelFloydWarshall(adjMatrix, numThreads);
+    } 
+    else {
+        cerr << "Invalid algorithm! Use 'B' for Bellman-Ford or 'F' for Floyd-Warshall." << endl;
         return 1;
     }
 
