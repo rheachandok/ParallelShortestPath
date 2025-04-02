@@ -3,6 +3,7 @@
         "*.erd": "json",
         "*.vuerd": "json",
         "fstream": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "vector": "cpp"
     }
 }

@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 4) {
-        cerr << "Usage: " << argv[0] << " B/F <num_nodes> <num_threads>" << endl;
+        cerr << "Usage: " << argv[0] << " B/F/J <num_nodes> <num_threads>" << endl;
         return 1;
     }
 
@@ -34,9 +34,11 @@ int main(int argc, char *argv[]) {
         floydWarshall(adjMatrix);
         parallelFloydWarshall(adjMatrix, numThreads);
     } 
-    else {
-        cerr << "Invalid algorithm! Use 'B' for Bellman-Ford or 'F' for Floyd-Warshall." << endl;
-        return 1;
+    else if (algorithm == "J") {
+        cout << "Running Johnsons Algorithm...\n";
+        vector<tuple<int, int, int>> edges = convertToEdgeList(graph);
+        johnsonsSequential(numNodes, edges);
+        johnsonsParallel(numNodes, edges, numThreads);
     }
 
     return 0;

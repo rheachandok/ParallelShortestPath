@@ -1,5 +1,24 @@
 #include "graph_utils.h"
 
+#include <vector>
+#include <tuple>
+
+using namespace std;
+
+vector<tuple<int, int, int>> convertToEdgeList(const vector<vector<pair<int, int>>> &graph) {
+    vector<tuple<int, int, int>> edgeList;
+
+    for (int u = 0; u < graph.size(); u++) {
+        for (const auto &edge : graph[u]) {
+            int v = edge.first;
+            int weight = edge.second;
+            edgeList.push_back(make_tuple(u, v, weight));
+        }
+    }
+
+    return edgeList;
+}
+
 void generateGraph(int nodes, const string &filename) {
     srand(time(0)); // Seed for random numbers
     int maxEdges = nodes * (nodes - 1); // Max edges in a directed graph (without self-loops)

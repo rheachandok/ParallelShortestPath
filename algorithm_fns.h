@@ -6,6 +6,7 @@
 #include <limits>
 #include <fstream>
 #include <omp.h>
+#include <tuple>
 
 using namespace std;
 
@@ -15,6 +16,8 @@ void parallelBellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int s
 void bellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source);
 void parallelFloydWarshall(vector<vector<int>> &dist, int num_threads);
 void floydWarshall(vector<vector<int>> &dist);
+void johnsons(int nodes, const vector<tuple<int, int, int>> &edges);
+void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int numThreads);
 
 
 #endif
