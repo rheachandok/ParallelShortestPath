@@ -12,7 +12,7 @@ using namespace std;
 
 #define INF numeric_limits<int>::max()
 
-void parallelBellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source);
+void parallelBellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source, int num_threads);
 void bellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source);
 void parallelFloydWarshall(vector<vector<int>> &dist, int num_threads);
 void floydWarshall(vector<vector<int>> &dist);

@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 
     int source = 0; 
 
-    int start, end;
+    double start, end;
 
     if (algorithm == "B") {
         cout << "Running Bellman-Ford Algorithm Sequential\n";
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
         cout << "Running Johnsons Algorithm Sequential\n";
         vector<tuple<int, int, int>> edges = convertToEdgeList(graph);
         start = omp_get_wtime();
-        johnsonsSequential(numNodes, edges);
+        johnsons(numNodes, edges);
         end = omp_get_wtime();
         cout<<"Time Taken:"<<(end-start)<<"\n";
         cout << "Running Johnsons Algorithm Parallel\n";
