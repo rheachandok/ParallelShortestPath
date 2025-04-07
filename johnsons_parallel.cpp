@@ -15,14 +15,24 @@ void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int 
 
     // Parallel Bellman-Ford to find potential values (h)
     for (int i = 0; i < nodes - 1; i++) {
+        vector<int> new_h = h;
+
         #pragma omp parallel for num_threads(numThreads)
         for (int j = 0; j < edges.size(); j++) {
             int u, v, weight;
             tie(u, v, weight) = edges[j];
-            if (h[u] != INF && h[u] + weight < h[v]) {
-                h[v] = h[u] + weight;
+
+            if (h[u] != INF && h[u] + weight < new_h[v]) {
+                #pragma omp critical
+                {
+                    if (h[u] + weight < new_h[v]) {
+                        new_h[v] = h[u] + weight;
+                    }
+                }
             }
         }
+
+        h = new_h;
     }
 
     // Reweight edges
