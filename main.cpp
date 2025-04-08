@@ -3,9 +3,9 @@
 #include <limits>
 #include <fstream>
 #include <cstdlib>
+#include <omp.h>
 #include "graph_utils.h"
 #include "algorithm_fns.h"
-#include <omp.h>
 
 int main(int argc, char *argv[]) {
     if (argc != 4) {
@@ -18,7 +18,10 @@ int main(int argc, char *argv[]) {
     int numThreads = atoi(argv[3]);
 
     // Generate and load graph
-    generateGraph(numNodes, "graph.txt");
+    bool pos_graph = 0;
+    if(algorithm == "D")
+	    pos_graph = 1;
+    generateGraph(numNodes, "graph.txt", pos_graph);
     vector<vector<pair<int, int>>> graph = loadGraph("graph.txt", numNodes);
     printGraph(graph);
 
@@ -67,6 +70,20 @@ int main(int argc, char *argv[]) {
         end = omp_get_wtime();
         cout<<"Time Taken:"<<(end-start)<<"\n";
     }
+    else if (algorithm == "D") {
+        cout << "Running Dijkstra Algorithm Sequential\n";
+        start = omp_get_wtime();
+        dijkstra(numNodes, graph, source);
+        end = omp_get_wtime();
+        cout << "Time Taken:" << (end - start) << "\n";
+
+        cout << "Running Dijkstra Algorithm Parallel\n";
+        start = omp_get_wtime();
+        parallelDijkstra(numNodes, graph, source, numThreads);
+        end = omp_get_wtime();
+        cout << "Time Taken:" << (end - start) << "\n";
+    }
+
 
     return 0;
 }
