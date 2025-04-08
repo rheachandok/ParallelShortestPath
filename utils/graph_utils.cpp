@@ -1,4 +1,4 @@
-#include "utils/graph_utils.h"
+#include "graph_utils.h"
 
 #include <vector>
 #include <tuple>
