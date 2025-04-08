@@ -18,6 +18,8 @@ void parallelFloydWarshall(vector<vector<int>> &dist, int num_threads);
 void floydWarshall(vector<vector<int>> &dist);
 void johnsons(int nodes, const vector<tuple<int, int, int>> &edges);
 void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int numThreads);
+void dijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source);
+void parallelDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int num_threads);
 
 
 #endif

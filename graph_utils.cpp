@@ -19,7 +19,7 @@ vector<tuple<int, int, int>> convertToEdgeList(const vector<vector<pair<int, int
     return edgeList;
 }
 
-void generateGraph(int nodes, const string &filename) {
+void generateGraph(int nodes, const string &filename,  bool nonNegativeWeights = false) {
     srand(time(0)); // Seed for random numbers
     int maxEdges = nodes * (nodes - 1); // Max edges in a directed graph (without self-loops)
     int numEdges = rand() % (maxEdges / 2) + nodes; // Ensure at least 'nodes' edges for connectivity
@@ -34,7 +34,13 @@ void generateGraph(int nodes, const string &filename) {
     for (int i = 0; i < numEdges; i++) {
         int u = rand() % nodes;  
         int v = rand() % nodes;  
-        int weight = rand() % 100 - 50; 
+        int weight;
+
+	if (nonNegativeWeights)
+            outFile << "0 " << rand() % (nodes - 1) + 1 << " " << rand() % 50 + 1 << "\n";
+            //weight = rand() % 50 + 1;  // strictly positive weights for Dijkstra
+        else
+            weight = rand() % 100 - 50; // allows negative values for other algorithms
 
         if (u != v) { 
             outFile << u << " " << v << " " << weight << "\n";
