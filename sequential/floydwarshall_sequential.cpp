@@ -1,23 +1,20 @@
 #include <iostream>
 #include <vector>
 #include <limits>
-#include <omp.h>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
 #define INF numeric_limits<int>::max()
 
-// Parallel Floyd-Warshall function
-void parallelFloydWarshall(vector<vector<int>> &dist, int num_threads) {
+// Floyd-Warshall function (Sequential)
+vector<vector<int>> floydWarshall(vector<vector<int>> &dist) {
 
     int V = dist.size();
-    omp_set_num_threads(num_threads); // Set the number of threads
 
-    for (int k = 0; k < V; k++) {
-        #pragma omp parallel for collapse(2) schedule(dynamic)
-        for (int i = 0; i < V; i++) {
-            for (int j = 0; j < V; j++) {
+    for (int k = 0; k < V; k++) {  // Intermediate node
+        for (int i = 0; i < V; i++) {  // Source node
+            for (int j = 0; j < V; j++) {  // Destination node
                 if (dist[i][k] != INF && dist[k][j] != INF) {
                     dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
                 }
@@ -25,6 +22,7 @@ void parallelFloydWarshall(vector<vector<int>> &dist, int num_threads) {
         }
     }
 
+    
     cout << "Shortest distances between every pair of vertices:\n";
     for (int i = 0; i < V; i++) {
         for (int j = 0; j < V; j++) {
@@ -35,5 +33,7 @@ void parallelFloydWarshall(vector<vector<int>> &dist, int num_threads) {
         }
         cout << endl;
     }
+        
+    
+    return dist;
 }
-

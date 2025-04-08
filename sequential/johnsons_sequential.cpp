@@ -2,13 +2,13 @@
 #include <vector>
 #include <tuple>
 #include <limits>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
 #define INF numeric_limits<int>::max()
 
-void johnsons(int nodes, const vector<tuple<int, int, int>> &edges) {
+vector<vector<int>> johnsons(int nodes, const vector<tuple<int, int, int>> &edges) {
     vector<int> h(nodes, INF);
     h[nodes - 1] = 0;
 
@@ -58,6 +58,7 @@ void johnsons(int nodes, const vector<tuple<int, int, int>> &edges) {
         }
     }
 
+    
     cout << "Johnson’s Algorithm (Sequential) - Shortest Distances:\n";
     for (int i = 0; i < nodes; i++) {
         for (int j = 0; j < nodes; j++) {
@@ -68,4 +69,7 @@ void johnsons(int nodes, const vector<tuple<int, int, int>> &edges) {
         }
         cout << endl;
     }
+        
+
+    return dist;
 }

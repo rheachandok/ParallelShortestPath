@@ -2,12 +2,12 @@
 #include <vector>
 #include <limits>
 #include <fstream>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
 // Bellman-Ford function
-void bellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source) {
+vector<int> bellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source) {
     vector<int> dist(nodes, numeric_limits<int>::max()); // Distance array, initialized to INF
     dist[source] = 0; // Distance to source is 0
 
@@ -31,12 +31,13 @@ void bellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source) {
             int weight = edge.second;
             if (dist[u] != numeric_limits<int>::max() && dist[u] + weight < dist[v]) {
                 cout << "Graph contains a negative weight cycle!\n";
-                return;
+                return dist;
             }
         }
     }
 
     // Print shortest distances
+    
     cout << "Shortest distances from source node " << source << ":\n";
     for (int i = 0; i < nodes; i++) {
         if (dist[i] == numeric_limits<int>::max())
@@ -44,4 +45,7 @@ void bellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source) {
         else
             cout << "Node " << i << " -> " << dist[i] << "\n";
     }
+    
+
+    return dist;
 }

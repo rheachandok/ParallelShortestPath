@@ -3,13 +3,13 @@
 #include <tuple>
 #include <limits>
 #include <omp.h>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
 #define INF numeric_limits<int>::max()
 
-void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int numThreads) {
+vector<vector<int>> johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int numThreads) {
     vector<int> h(nodes, INF);
     h[nodes - 1] = 0;
 
@@ -30,9 +30,9 @@ void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int 
                     }
                 }
             }
-        }
+	}
 
-        h = new_h;
+	h = new_h;
     }
 
     // Reweight edges
@@ -45,7 +45,6 @@ void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int 
         tie(u, v, weight) = edges[j];
         dist[u][v] = weight + h[u] - h[v];
     }
-
     // Run Dijkstra for each node in parallel
     #pragma omp parallel for num_threads(numThreads)
     for (int src = 0; src < nodes; src++) {
@@ -54,6 +53,7 @@ void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int 
 
         vector<bool> visited(nodes, false);
         for (int i = 0; i < nodes; i++) {
+            // Find the node with the smallest distance that hasn't been visited
             int u = -1;
             for (int j = 0; j < nodes; j++) {
                 if (!visited[j] && (u == -1 || minDist[j] < minDist[u])) {
@@ -64,19 +64,29 @@ void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int 
             if (minDist[u] == INF) break;
             visited[u] = true;
 
+            // Parallelize the relaxation step for each edge
+            #pragma omp parallel for num_threads(numThreads)
             for (int v = 0; v < nodes; v++) {
                 if (dist[u][v] != INF && minDist[u] + dist[u][v] < minDist[v]) {
-                    minDist[v] = minDist[u] + dist[u][v];
+                    #pragma omp critical
+                    {
+                        if (minDist[u] + dist[u][v] < minDist[v]) {
+                            minDist[v] = minDist[u] + dist[u][v];
+                        }
+                    }
                 }
             }
         }
 
+        // Update distances for the source node
+        #pragma omp parallel for num_threads(numThreads)
         for (int i = 0; i < nodes; i++) {
             dist[src][i] = (minDist[i] == INF) ? INF : minDist[i] - h[src] + h[i];
         }
     }
 
-    cout << "Johnson’s Algorithm (Sequential) - Shortest Distances:\n";
+    // Printing the result matrix
+    cout << "Johnson’s Algorithm (Parallel) - Shortest Distances:\n";
     for (int i = 0; i < nodes; i++) {
         for (int j = 0; j < nodes; j++) {
             if (dist[i][j] == INF)
@@ -86,4 +96,6 @@ void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int 
         }
         cout << endl;
     }
+
+    return dist;
 }

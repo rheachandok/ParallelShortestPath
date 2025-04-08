@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <tuple>
+#include <set>
 
 using namespace std;
 
@@ -19,10 +20,10 @@ vector<tuple<int, int, int>> convertToEdgeList(const vector<vector<pair<int, int
     return edgeList;
 }
 
-void generateGraph(int nodes, const string &filename,  bool nonNegativeWeights = false) {
-    srand(time(0)); // Seed for random numbers
-    int maxEdges = nodes * (nodes - 1); // Max edges in a directed graph (without self-loops)
-    int numEdges = rand() % (maxEdges / 2) + nodes; // Ensure at least 'nodes' edges for connectivity
+void generateGraph(int nodes, const string &filename, bool nonNegativeWeights = false) {
+    srand(time(0));
+    int maxEdges = nodes * (nodes - 1);
+    int numEdges = rand() % (maxEdges / 2) + nodes;
 
     ofstream outFile(filename);
     if (!outFile) {
@@ -31,21 +32,27 @@ void generateGraph(int nodes, const string &filename,  bool nonNegativeWeights =
     }
 
     outFile << nodes << "\n";
-    for (int i = 0; i < numEdges; i++) {
-        int u = rand() % nodes;  
-        int v = rand() % nodes;  
+
+    set<pair<int, int>> edgeSet; // Track unique edges
+
+    while (edgeSet.size() < numEdges) {
+        int u = rand() % nodes;
+        int v = rand() % nodes;
+
+        if (u == v) continue; // no self-loops
+        if (edgeSet.count({u, v})) continue; // already exists
+
+        edgeSet.insert({u, v});
+
         int weight;
-
-	if (nonNegativeWeights)
-            outFile << "0 " << rand() % (nodes - 1) + 1 << " " << rand() % 50 + 1 << "\n";
-            //weight = rand() % 50 + 1;  // strictly positive weights for Dijkstra
+        if (nonNegativeWeights)
+            weight = rand() % 50 + 1;
         else
-            weight = rand() % 100 - 50; // allows negative values for other algorithms
+            weight = rand() % 100 - 50;
 
-        if (u != v) { 
-            outFile << u << " " << v << " " << weight << "\n";
-        }
+        outFile << u << " " << v << " " << weight << "\n";
     }
+
     outFile.close();
 }
 

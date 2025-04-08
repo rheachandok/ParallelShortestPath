@@ -2,11 +2,11 @@
 #include <vector>
 #include <queue>
 #include <limits>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
-void dijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source) {
+vector<int> dijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source) {
     vector<int> dist(nodes, numeric_limits<int>::max());
     dist[source] = 0;
 
@@ -31,6 +31,7 @@ void dijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source) {
         }
     }
 
+    
     cout << "Sequential Dijkstra shortest distances from node " << source << ":\n";
     for (int i = 0; i < nodes; i++) {
         if (dist[i] == numeric_limits<int>::max())
@@ -38,5 +39,8 @@ void dijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source) {
         else
             cout << "Node " << i << " -> " << dist[i] << "\n";
     }
+            
+
+    return dist;
 }
 

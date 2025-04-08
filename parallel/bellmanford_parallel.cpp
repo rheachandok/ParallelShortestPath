@@ -3,11 +3,11 @@
 #include <limits>
 #include <fstream>
 #include <omp.h>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
-void parallelBellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source, int num_threads) {
+vector<int> parallelBellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int source, int num_threads) {
     vector<int> dist(nodes, numeric_limits<int>::max());
     vector<int> new_dist(nodes, numeric_limits<int>::max());
     dist[source] = 0;
@@ -57,10 +57,11 @@ void parallelBellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int s
 
     if (hasNegativeCycle) {
         cout << "Graph contains a negative weight cycle!\n";
-        return;
+        return dist;
     }
 
     // Print results
+    
     cout << "Shortest distances from source node " << source << ":\n";
     for (int i = 0; i < nodes; i++) {
         if (dist[i] == numeric_limits<int>::max())
@@ -68,4 +69,7 @@ void parallelBellmanFord(int nodes, vector<vector<pair<int, int>>> &graph, int s
         else
             cout << "Node " << i << " -> " << dist[i] << "\n";
     }
+    
+
+    return dist;
 }

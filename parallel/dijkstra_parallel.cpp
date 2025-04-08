@@ -2,11 +2,11 @@
 #include <vector>
 #include <limits>
 #include <omp.h>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
-void parallelDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int num_threads) {
+vector<int> parallelDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int num_threads) {
     vector<int> dist(nodes, numeric_limits<int>::max());
     vector<bool> visited(nodes, false);
     dist[source] = 0;
@@ -60,6 +60,7 @@ void parallelDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int sour
         }
     }
 
+    
     cout << "Parallel Dijkstra shortest distances from node " << source << ":\n";
     for (int i = 0; i < nodes; i++) {
         if (dist[i] == numeric_limits<int>::max())
@@ -67,5 +68,8 @@ void parallelDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int sour
         else
             cout << "Node " << i << " -> " << dist[i] << "\n";
     }
+    
+
+    return dist;
 }
 
