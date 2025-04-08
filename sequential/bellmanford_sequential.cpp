@@ -2,7 +2,7 @@
 #include <vector>
 #include <limits>
 #include <fstream>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <omp.h>
-#include "graph_utils.h"
+#include "utils/graph_utils.h"
 #include "algorithm_fns.h"
 
 int main(int argc, char *argv[]) {
