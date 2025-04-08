@@ -2,34 +2,52 @@
 #include <vector>
 #include <tuple>
 #include <limits>
-#include "algorithm_fns.h"
+#include <omp.h>
+#include "../algorithm_fns.h"
 
 using namespace std;
 
 #define INF numeric_limits<int>::max()
 
-void johnsons(int nodes, const vector<tuple<int, int, int>> &edges) {
+void johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int numThreads) {
     vector<int> h(nodes, INF);
     h[nodes - 1] = 0;
 
-    // Bellman-Ford to find potential values (h)
+    // Parallel Bellman-Ford to find potential values (h)
     for (int i = 0; i < nodes - 1; i++) {
-        for (const auto &[u, v, weight] : edges) {
-            if (h[u] != INF && h[u] + weight < h[v]) {
-                h[v] = h[u] + weight;
+        vector<int> new_h = h;
+
+        #pragma omp parallel for num_threads(numThreads)
+        for (int j = 0; j < edges.size(); j++) {
+            int u, v, weight;
+            tie(u, v, weight) = edges[j];
+
+            if (h[u] != INF && h[u] + weight < new_h[v]) {
+                #pragma omp critical
+                {
+                    if (h[u] + weight < new_h[v]) {
+                        new_h[v] = h[u] + weight;
+                    }
+                }
             }
         }
+
+        h = new_h;
     }
 
     // Reweight edges
     vector<vector<int>> dist(nodes, vector<int>(nodes, INF));
     for (int i = 0; i < nodes; i++) dist[i][i] = 0;
 
-    for (const auto &[u, v, weight] : edges) {
+    #pragma omp parallel for num_threads(numThreads)
+    for (int j = 0; j < edges.size(); j++) {
+        int u, v, weight;
+        tie(u, v, weight) = edges[j];
         dist[u][v] = weight + h[u] - h[v];
     }
 
-    // Run Dijkstra for each node
+    // Run Dijkstra for each node in parallel
+    #pragma omp parallel for num_threads(numThreads)
     for (int src = 0; src < nodes; src++) {
         vector<int> minDist(nodes, INF);
         minDist[src] = 0;

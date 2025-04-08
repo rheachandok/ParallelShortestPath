@@ -3,7 +3,7 @@
 #include <limits>
 #include <fstream>
 #include <omp.h>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 

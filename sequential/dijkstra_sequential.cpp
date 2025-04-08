@@ -2,7 +2,7 @@
 #include <vector>
 #include <queue>
 #include <limits>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
