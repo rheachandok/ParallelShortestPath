@@ -51,7 +51,7 @@ void check2dEquality(vector<vector<int>> &a, vector<vector<int>> &b)
 
 int main(int argc, char *argv[]) {
     if (argc != 4) {
-        cerr << "Usage: " << argv[0] << " D/B/F/J <num_nodes> <num_threads>" << endl;
+        cerr << "Usage: " << argv[0] << " D/B/F/J/BD <num_nodes> <num_threads>" << endl;
         return 1;
     }
 
@@ -68,6 +68,7 @@ int main(int argc, char *argv[]) {
     vector<vector<pair<int, int>>> graph = loadGraph("graph.txt", numNodes);
 
     int source = 0; 
+    int target = rand() % numNodes + 1; 
 
     double start, end;
 
@@ -128,6 +129,23 @@ int main(int argc, char *argv[]) {
         vector<int> d_dist2 = parallelDijkstra(numNodes, graph, source, numThreads);
         end = omp_get_wtime();
         checkEquality(d_dist1, d_dist2);
+        cout << "Time Taken:" << (end - start) << "\n";
+    }
+    else if (algorithm == "BD") {
+        cout << "Running Bidirectional Dijkstra Algorithm Sequential\n";
+        start = omp_get_wtime();
+        int b1 = bidirectionalDijkstra(numNodes, graph, source, target);
+        end = omp_get_wtime();
+        cout << "Time Taken:" << (end - start) << "\n";
+
+        cout << "Running Bidirectional Dijkstra Algorithm Parallel\n";
+        start = omp_get_wtime();
+        int b2 = parallelBidirectionalDijkstra(numNodes, graph, source, target, numThreads)
+        end = omp_get_wtime();
+        if(b1==b2)
+            cout << "Parallel and Sequential versions return the same result\n";
+        else
+            cout << "Parallel and Sequential versions don't return the same result\n";
         cout << "Time Taken:" << (end - start) << "\n";
     }
 

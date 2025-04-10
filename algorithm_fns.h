@@ -20,6 +20,8 @@ vector<vector<int>> johnsons(int nodes, const vector<tuple<int, int, int>> &edge
 vector<vector<int>> johnsonsParallel(int nodes, const vector<tuple<int, int, int>> &edges, int numThreads);
 vector<int> dijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source);
 vector<int> parallelDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int num_threads);
+int bidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int target);
+int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int target, int num_threads);
 
 
 #endif
