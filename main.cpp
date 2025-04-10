@@ -6,7 +6,7 @@
 #include <omp.h>
 #include "utils/graph_utils.h"
 #include "algorithm_fns.h"
-
+#include <iomanip>
 using namespace std;
 
 void checkEquality(vector<int>& a, vector<int>& b) {
@@ -61,14 +61,13 @@ int main(int argc, char *argv[]) {
 
     // Generate and load graph
     bool pos_graph = 0;
-    if(algorithm == "D")
-	    pos_graph = 1;
+	pos_graph = 1;
     
     generateGraph(numNodes, "graph.txt", pos_graph);
     vector<vector<pair<int, int>>> graph = loadGraph("graph.txt", numNodes);
 
     int source = 0; 
-    int target = rand() % numNodes + 1; 
+    int target = rand() % numNodes; 
 
     double start, end;
 
@@ -78,7 +77,7 @@ int main(int argc, char *argv[]) {
         vector<int> b_dist1 = bellmanFord(numNodes, graph, source);
 		end = omp_get_wtime();
 
-        cout<<"Time Taken:"<<(end-start)<<"\n";
+        cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
 
         cout << "Running Bellman-Ford Algorithm Parallel\n";
         start = omp_get_wtime();
@@ -87,7 +86,7 @@ int main(int argc, char *argv[]) {
 
         checkEquality(b_dist1, b_dist2);
 
-        cout<<"Time Taken:"<<(end-start)<<"\n";
+        cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
     } 
     else if (algorithm == "F") {
         cout << "Running Floyd-Warshall Algorithm Sequential\n";
@@ -95,13 +94,13 @@ int main(int argc, char *argv[]) {
         start = omp_get_wtime();
         vector<vector<int>> f_dist1 = floydWarshall(adjMatrix);
         end = omp_get_wtime();
-        cout<<"Time Taken:"<<(end-start)<<"\n";
+        cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
         cout << "Running Floyd-Warshall Algorithm Parallel\n";
         start = omp_get_wtime();
         vector<vector<int>> f_dist2 = parallelFloydWarshall(adjMatrix, numThreads);
         end = omp_get_wtime();
         check2dEquality(f_dist1,f_dist2);
-        cout<<"Time Taken:"<<(end-start)<<"\n";
+        cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
     } 
     else if (algorithm == "J") {
         cout << "Running Johnsons Algorithm Sequential\n";
@@ -109,44 +108,44 @@ int main(int argc, char *argv[]) {
         start = omp_get_wtime();
         vector<vector<int>> j_dist1 = johnsons(numNodes, edges);
         end = omp_get_wtime();
-        cout<<"Time Taken:"<<(end-start)<<"\n";
+        cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
         cout << "Running Johnsons Algorithm Parallel\n";
         start = omp_get_wtime();
         vector<vector<int>> j_dist2 = johnsonsParallel(numNodes, edges, numThreads);
         end = omp_get_wtime();
         check2dEquality(j_dist1, j_dist2);
-        cout<<"Time Taken:"<<(end-start)<<"\n";
+        cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
     }
     else if (algorithm == "D") {
         cout << "Running Dijkstra Algorithm Sequential\n";
         start = omp_get_wtime();
         vector<int> d_dist1 = dijkstra(numNodes, graph, source);
         end = omp_get_wtime();
-        cout << "Time Taken:" << (end - start) << "\n";
+        cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
 
         cout << "Running Dijkstra Algorithm Parallel\n";
         start = omp_get_wtime();
         vector<int> d_dist2 = parallelDijkstra(numNodes, graph, source, numThreads);
         end = omp_get_wtime();
         checkEquality(d_dist1, d_dist2);
-        cout << "Time Taken:" << (end - start) << "\n";
+        cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
     }
     else if (algorithm == "BD") {
         cout << "Running Bidirectional Dijkstra Algorithm Sequential\n";
         start = omp_get_wtime();
         int b1 = bidirectionalDijkstra(numNodes, graph, source, target);
         end = omp_get_wtime();
-        cout << "Time Taken:" << (end - start) << "\n";
+        cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
 
         cout << "Running Bidirectional Dijkstra Algorithm Parallel\n";
         start = omp_get_wtime();
-        int b2 = parallelBidirectionalDijkstra(numNodes, graph, source, target, numThreads)
+        int b2 = parallelBidirectionalDijkstra(numNodes, graph, source, target, numThreads);
         end = omp_get_wtime();
         if(b1==b2)
             cout << "Parallel and Sequential versions return the same result\n";
         else
             cout << "Parallel and Sequential versions don't return the same result\n";
-        cout << "Time Taken:" << (end - start) << "\n";
+            cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
     }
 
 

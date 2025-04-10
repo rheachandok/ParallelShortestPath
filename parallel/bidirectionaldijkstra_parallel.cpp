@@ -4,11 +4,11 @@
 #include <limits>
 #include <unordered_set>
 #include <omp.h>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
-const int INF = numeric_limits<int>::max();
+#define INF numeric_limits<int>::max()
 
 int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int target, int num_threads) {
     vector<int> distF(nodes, INF), distB(nodes, INF);

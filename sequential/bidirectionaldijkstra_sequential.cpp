@@ -3,11 +3,11 @@
 #include <queue>
 #include <limits>
 #include <unordered_set>
-#include "algorithm_fns.h"
+#include "../algorithm_fns.h"
 
 using namespace std;
 
-const int INF = numeric_limits<int>::max();
+#define INF numeric_limits<int>::max()
 
 int bidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int target) {
     vector<int> distF(nodes, INF), distB(nodes, INF);
