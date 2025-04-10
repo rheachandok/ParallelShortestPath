@@ -2,16 +2,12 @@
 #include <vector>
 #include <queue>
 #include <limits>
-#include <fstream>
 #include <unordered_set>
-#include <unordered_map>
-#include "../algorithm_fns.h"
 
 using namespace std;
 
 const int INF = numeric_limits<int>::max();
 
-// Bidirectional Dijkstra - Sequential
 int bidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int target) {
     vector<int> distF(nodes, INF), distB(nodes, INF);
     distF[source] = 0;
@@ -23,6 +19,14 @@ int bidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int 
 
     unordered_set<int> visitedF, visitedB;
     int best = INF;
+
+    // Reverse graph for backward search
+    vector<vector<pair<int, int>>> reverseGraph(nodes);
+    for (int u = 0; u < nodes; ++u) {
+        for (auto &[v, w] : graph[u]) {
+            reverseGraph[v].push_back({u, w});
+        }
+    }
 
     while (!pqF.empty() || !pqB.empty()) {
         if (!pqF.empty()) {
@@ -45,7 +49,7 @@ int bidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int 
             visitedB.insert(u);
             if (visitedF.count(u)) best = min(best, distF[u] + distB[u]);
 
-            for (auto &[v, w] : graph[u]) {
+            for (auto &[v, w] : reverseGraph[u]) {  // Use the reversed graph here
                 if (distB[u] + w < distB[v]) {
                     distB[v] = distB[u] + w;
                     pqB.push({distB[v], v});
@@ -54,8 +58,11 @@ int bidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int 
         }
     }
 
-    if (best == INF) cout << "No path found between " << source << " and " << target << endl;
-    else cout << "Shortest path between " << source << " and " << target << ": " << best << endl;
+    if (best == INF) {
+        cout << "No path found between " << source << " and " << target << endl;
+    } else {
+        cout << "Shortest path between " << source << " and " << target << ": " << best << endl;
+    }
 
     return best;
 }
