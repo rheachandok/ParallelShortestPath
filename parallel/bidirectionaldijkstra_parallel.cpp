@@ -4,6 +4,7 @@
 #include <limits>
 #include <unordered_set>
 #include <omp.h>
+#include "algorithm_fns.h"
 
 using namespace std;
 
