@@ -17,34 +17,34 @@ vector<int> parallelDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, i
         int u = -1;
         int minDist = numeric_limits<int>::max();
 
-        // Parallel section to find node with minimum distance
+        // Step 1: Parallel reduction to find node with the minimum dist
         #pragma omp parallel
         {
-            int local_min = numeric_limits<int>::max();
             int local_u = -1;
+            int local_minDist = numeric_limits<int>::max();
 
             #pragma omp for nowait
             for (int v = 0; v < nodes; v++) {
-                if (!visited[v] && dist[v] < local_min) {
-                    local_min = dist[v];
+                if (!visited[v] && dist[v] < local_minDist) {
+                    local_minDist = dist[v];
                     local_u = v;
                 }
             }
 
+            // Use critical to safely compare and update u and minDist
             #pragma omp critical
             {
-                if (local_min < minDist) {
-                    minDist = local_min;
+                if (local_minDist < minDist) {
+                    minDist = local_minDist;
                     u = local_u;
                 }
             }
         }
 
-        if (u == -1) break; // All nodes reachable visited
-
+        if (u == -1) break;
         visited[u] = true;
 
-        // Update neighbors
+        // Step 2: Parallel relaxation of neighbors
         #pragma omp parallel for
         for (int j = 0; j < graph[u].size(); j++) {
             int v = graph[u][j].first;
@@ -60,16 +60,5 @@ vector<int> parallelDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, i
         }
     }
 
-    
-    cout << "Parallel Dijkstra shortest distances from node " << source << ":\n";
-    for (int i = 0; i < nodes; i++) {
-        if (dist[i] == numeric_limits<int>::max())
-            cout << "Node " << i << " -> INF\n";
-        else
-            cout << "Node " << i << " -> " << dist[i] << "\n";
-    }
-    
-
     return dist;
 }
-

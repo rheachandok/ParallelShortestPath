@@ -2,16 +2,18 @@
 #include <vector>
 #include <queue>
 #include <limits>
-#include <unordered_set>
 #include <omp.h>
-#include "../algorithm_fns.h"
+#include <atomic>
 
 using namespace std;
 
 #define INF numeric_limits<int>::max()
 
-int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int target, int num_threads) {
+int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph,
+                                  int source, int target, int num_threads) {
     vector<int> distF(nodes, INF), distB(nodes, INF);
+    vector<bool> visitedF(nodes, false), visitedB(nodes, false);
+
     distF[source] = 0;
     distB[target] = 0;
 
@@ -19,7 +21,6 @@ int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &gra
     pqF.push({0, source});
     pqB.push({0, target});
 
-    unordered_set<int> visitedF, visitedB;
     int best = INF;
 
     // Reverse graph for backward search
@@ -30,25 +31,29 @@ int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &gra
         }
     }
 
-    omp_set_num_threads(num_threads);  // Set the number of threads for OpenMP
+    omp_set_num_threads(num_threads);
 
-    while (!pqF.empty() || !pqB.empty()) {
+    while (!pqF.empty() && !pqB.empty()) {
+        // Early termination condition
+        if (best <= pqF.top().first + pqB.top().first) break;
+
         #pragma omp parallel sections
         {
             #pragma omp section
             {
                 if (!pqF.empty()) {
                     auto [d, u] = pqF.top(); pqF.pop();
-                    bool skip = visitedF.count(u);
-                    if (!skip) {
-                        visitedF.insert(u);
-                        if (visitedB.count(u)) {
-                            #pragma omp critical(best)
+
+                    if (!visitedF[u]) {
+                        visitedF[u] = true;
+                        if (visitedB[u]) {
+                            #pragma omp critical
                             best = min(best, distF[u] + distB[u]);
                         }
+
                         for (auto &[v, w] : graph[u]) {
-                            if (distF[u] + w < distF[v]) {
-                                #pragma omp critical(distF)
+                            if (!visitedF[v] && distF[u] + w < distF[v]) {
+                                #pragma omp critical
                                 {
                                     distF[v] = distF[u] + w;
                                     pqF.push({distF[v], v});
@@ -63,16 +68,17 @@ int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &gra
             {
                 if (!pqB.empty()) {
                     auto [d, u] = pqB.top(); pqB.pop();
-                    bool skip = visitedB.count(u);
-                    if (!skip) {
-                        visitedB.insert(u);
-                        if (visitedF.count(u)) {
-                            #pragma omp critical(best)
+
+                    if (!visitedB[u]) {
+                        visitedB[u] = true;
+                        if (visitedF[u]) {
+                            #pragma omp critical
                             best = min(best, distF[u] + distB[u]);
                         }
+
                         for (auto &[v, w] : reverseGraph[u]) {
-                            if (distB[u] + w < distB[v]) {
-                                #pragma omp critical(distB)
+                            if (!visitedB[v] && distB[u] + w < distB[v]) {
+                                #pragma omp critical
                                 {
                                     distB[v] = distB[u] + w;
                                     pqB.push({distB[v], v});
@@ -82,15 +88,14 @@ int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &gra
                     }
                 }
             }
-        } }
-
+        }
+    }
 
     if (best == INF) {
         cout << "No path found between " << source << " and " << target << endl;
+        return -1;
     } else {
-	cout << "Shortest path between " << source << " and " << target << ": " << best << endl;
+        cout << "Shortest path between " << source << " and " << target << ": " << best << endl;
+        return best;
     }
-
-
-    return best;
 }
