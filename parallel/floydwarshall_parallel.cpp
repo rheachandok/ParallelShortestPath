@@ -7,37 +7,26 @@
 using namespace std;
 
 #define INF numeric_limits<int>::max()
-
+inline int idx(int i, int j, int V) { return i*V + j; }
 // Parallel Floyd-Warshall function
-vector<vector<int>> parallelFloydWarshall(vector<vector<int>> &dist, int num_threads) {
+vector<vector<int>>
+parallelFloydWarshall(vector<vector<int>>& dist, int num_threads){
+    const int V = static_cast<int>(dist.size());
+    omp_set_num_threads(num_threads);
 
-    int V = dist.size();
-    omp_set_num_threads(num_threads); // Set the number of threads
+    #pragma omp parallel                      
+    for (int k = 0; k < V; ++k) {
+        #pragma omp for schedule(static)     
+        for (int i = 0; i < V; ++i) {
+            const int dik = dist[i][k];       
+            if (dik == INF) continue;
 
-    for (int k = 0; k < V; k++) {
-        #pragma omp parallel for collapse(2) schedule(dynamic)
-        for (int i = 0; i < V; i++) {
-            for (int j = 0; j < V; j++) {
-                if (dist[i][k] != INF && dist[k][j] != INF) {
-                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
-                }
+            for (int j = 0; j < V; ++j) {
+                const int alt = dik + dist[k][j];
+                if (alt < dist[i][j]) dist[i][j] = alt;
             }
         }
     }
-
-    
-    cout << "Shortest distances between every pair of vertices:\n";
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            if (dist[i][j] == INF)
-                cout << "INF\t";
-            else
-                cout << dist[i][j] << "\t";
-        }
-        cout << endl;
-    }
-        
-
     return dist;
 }
 
