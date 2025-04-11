@@ -4,6 +4,7 @@
 #include <queue>
 #include <limits>
 #include <omp.h>
+#include "../algorithm_fns.h"
 
 using namespace std;
 

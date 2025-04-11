@@ -4,6 +4,7 @@
 #include <limits>
 #include <omp.h>
 #include <atomic>
+#include "../algorithm_fns.h"
 
 using namespace std;
 
