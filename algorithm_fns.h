@@ -22,6 +22,9 @@ vector<int> dijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int sourc
 vector<int> parallelDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int num_threads);
 int bidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int target);
 int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &graph, int source, int target, int num_threads);
+vector<int> deltaStepping(int nodes, const vector<vector<pair<int, int>>> &graph, int source, int delta);
+vector<int> deltaSteppingParallel(int nodes, const vector<vector<pair<int, int>>> &graph, int source, int delta, int numThreads);
+
 
 
 #endif

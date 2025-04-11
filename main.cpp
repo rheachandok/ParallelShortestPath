@@ -147,6 +147,22 @@ int main(int argc, char *argv[]) {
             cout << "Parallel and Sequential versions don't return the same result\n";
             cout << fixed << setprecision(8) << "Time Taken:" << (end - start) << endl;
     }
+    else if (algorithm == "S") {
+        cout << "Running Delta-Stepping Sequential\n";
+        int delta = 10;
+        start = omp_get_wtime();
+        vector<int> ds1 = deltaStepping(numNodes, graph, source, delta);
+        end = omp_get_wtime();
+        cout << fixed << setprecision(8) << "Time Taken: " << (end - start) << "\n";
+
+        cout << "Running Delta-Stepping Parallel\n";
+        start = omp_get_wtime();
+        vector<int> ds2 = deltaSteppingParallel(numNodes, graph, source, delta, numThreads);
+        end = omp_get_wtime();
+        checkEquality(ds1, ds2);
+        cout << fixed << setprecision(8) << "Time Taken: " << (end - start) << "\n";
+    }
+
 
 
     return 0;
