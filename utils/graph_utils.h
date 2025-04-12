@@ -13,7 +13,7 @@ using namespace std;
 
 #define INF numeric_limits<int>::max()
 
-void generateGraph(int nodes, const string &filename,  bool nonNegativeWeights);
+void generateGraph(int nodes, const string &filename,  bool nonNegativeWeights, int sparsity_factor);
 void printGraph(const vector<vector<pair<int, int>>> &adjList);
 vector<vector<pair<int, int>>> loadGraph(const string &filename, int &nodes);
 vector<vector<int>> convertToMatrix(const vector<vector<pair<int, int>>> &graph, int numNodes);
