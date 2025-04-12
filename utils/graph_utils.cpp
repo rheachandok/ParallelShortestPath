@@ -20,10 +20,14 @@ vector<tuple<int, int, int>> convertToEdgeList(const vector<vector<pair<int, int
     return edgeList;
 }
 
-void generateGraph(int nodes, const string &filename, bool nonNegativeWeights = false) {
+void generateGraph(int nodes, const string &filename, bool nonNegativeWeights = false, int sparsity_factor = 2) {
     srand(time(0));
-    int maxEdges = nodes * (nodes - 1);
-    int numEdges = rand() % (maxEdges / 2) + nodes;
+    int maxPossibleEdges = nodes * (nodes - 1);
+    
+    // Calculate number of edges based on sparsity factor
+    int maxAllowedEdges = maxPossibleEdges / max(1, sparsity_factor);
+    int minEdges = 1; // Minimum 1 edge to ensure some connectivity
+    int numEdges = minEdges + (maxAllowedEdges > minEdges ? rand() % (maxAllowedEdges - minEdges) : 0);
 
     ofstream outFile(filename);
     if (!outFile) {
@@ -33,28 +37,29 @@ void generateGraph(int nodes, const string &filename, bool nonNegativeWeights = 
 
     outFile << nodes << "\n";
 
-    set<pair<int, int>> edgeSet; // Track unique edges
+    set<pair<int, int>> edgeSet;
 
     while (edgeSet.size() < numEdges) {
         int u = rand() % nodes;
         int v = rand() % nodes;
 
-        if (u == v) continue; // no self-loops
-        if (edgeSet.count({u, v})) continue; // already exists
+        if (u == v) continue;
+        if (edgeSet.count({u, v})) continue;
 
         edgeSet.insert({u, v});
 
         int weight;
         if (nonNegativeWeights)
-            weight = rand() % 50 + 1;
+            weight = rand() % 50 + 1;  // 1-50 positive weights
         else
-            weight = rand() % 100 - 50;
+            weight = (rand() % 100) - 50;  // -50 to 49 weights
 
         outFile << u << " " << v << " " << weight << "\n";
     }
 
     outFile.close();
 }
+
 
 void printGraph(const vector<vector<pair<int, int>>> &adjList) {
     for (int i = 0; i < adjList.size(); i++) {

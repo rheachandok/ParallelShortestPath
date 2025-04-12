@@ -61,9 +61,14 @@ int main(int argc, char *argv[]) {
 
     // Generate and load graph
     bool pos_graph = 0;
+
+    //to Generate only positive edges
 	pos_graph = 1;
+
+    //Sparsity factor - can be varied to generate sparse graph
+    int sparsity_factor = 5; 
     
-    generateGraph(numNodes, "graph.txt", pos_graph);
+    generateGraph(numNodes, "graph.txt", pos_graph, sparsity_factor);
     vector<vector<pair<int, int>>> graph = loadGraph("graph.txt", numNodes);
 
     int source = 0; 
