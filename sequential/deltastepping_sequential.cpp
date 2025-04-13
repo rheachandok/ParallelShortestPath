@@ -21,7 +21,7 @@ vector<int> deltaStepping(int nodes, const vector<vector<pair<int, int>>> &graph
                 int b = dist[v] / delta;
                 buckets[b].insert(v);
             }
-        }
+	}
     };
 
     int i = 0;
@@ -40,11 +40,10 @@ vector<int> deltaStepping(int nodes, const vector<vector<pair<int, int>>> &graph
             for (int u : req) {
                 relax(u, numeric_limits<int>::max()); // All edges
             }
-        }
-        ++i;
-        while (!buckets.count(i) && i < nodes * 2) ++i; // Skip empty bucket indices
+	}
+	++i;
+	while (!buckets.count(i) && i < nodes * 2) ++i; // Skip empty bucket indices
     }
 
     return dist;
 }
-

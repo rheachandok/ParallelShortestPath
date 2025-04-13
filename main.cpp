@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
     }
     else if (algorithm == "S") {
         cout << "Running Delta-Stepping Sequential\n";
-        int delta = 10;
+        int delta = 2;
         start = omp_get_wtime();
         vector<int> ds1 = deltaStepping(numNodes, graph, source, delta);
         end = omp_get_wtime();
