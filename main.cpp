@@ -17,6 +17,7 @@ void checkEquality(vector<int>& a, vector<int>& b) {
     for (size_t i = 0; i < a.size(); ++i) {
         if (a[i] != b[i]) {
             cout << "Parallel and Sequential versions don't return the same result\n";
+            cout << "Mismatch at index:"<<i<<"\n";
             return;
         }
     }

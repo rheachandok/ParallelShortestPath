@@ -20,7 +20,6 @@ fi
 # 2) Parameter lists
 ###############################################################################
 algorithms=(B F J D BD S)          # Bellman‑Ford, Floyd–Warshall, Johnson
-# algorithms=(J) 
 node_counts=(10 100 1000 2000 4000)
 thread_counts=(1 2 4 8)
 

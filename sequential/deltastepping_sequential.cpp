@@ -21,7 +21,7 @@ vector<int> deltaStepping(int nodes, const vector<vector<pair<int, int>>> &graph
                 int b = dist[v] / delta;
                 buckets[b].insert(v);
             }
-	}
+        }
     };
 
     int i = 0;
@@ -40,9 +40,18 @@ vector<int> deltaStepping(int nodes, const vector<vector<pair<int, int>>> &graph
             for (int u : req) {
                 relax(u, numeric_limits<int>::max()); // All edges
             }
-	}
-	++i;
-	while (!buckets.count(i) && i < nodes * 2) ++i; // Skip empty bucket indices
+        }
+        ++i;
+        while (!buckets.count(i) && i < nodes * 2) ++i; // Skip empty bucket indices
+    }
+
+    // Print distances
+    cout << "Shortest distances from source node " << source << ":\n";
+    for (int i = 0; i < nodes; ++i) {
+        if (dist[i] == numeric_limits<int>::max())
+            cout << "Node " << i << ": INF\n";
+        else
+            cout << "Node " << i << ": " << dist[i] << "\n";
     }
 
     return dist;
