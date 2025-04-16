@@ -94,7 +94,7 @@ int parallelBidirectionalDijkstra(int nodes, vector<vector<pair<int, int>>> &gra
 
     if (best == INF) {
         cout << "No path found between " << source << " and " << target << endl;
-        return -1;
+        return best;
     } else {
         cout << "Shortest path between " << source << " and " << target << ": " << best << endl;
         return best;
